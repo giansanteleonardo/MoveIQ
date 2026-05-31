@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoveIQ — AI-Powered Removalist Quoting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1B2A4A;
+    --navy-light: #243859;
+    --cyan: #00AACC;
+    --cyan-dark: #0088A8;
+    --cyan-pale: #E6F6FA;
+    --white: #ffffff;
+    --bg: #F4F6F9;
+    --bg-card: #ffffff;
+    --bg-secondary: #F0F3F7;
+    --border: #DDE2EA;
+    --border-focus: #00AACC;
+    --text-primary: #1B2A4A;
+    --text-secondary: #5A6A82;
+    --text-muted: #8A9AB2;
+    --text-white: #ffffff;
+    --cyan-text: #7BCCE0;
+    --warn-bg: rgba(239,159,39,0.18);
+    --warn-text: #B87A10;
+    --success-bg: #E8F5F0;
+    --success-text: #0F6E56;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow-card: 0 1px 3px rgba(27,42,74,0.08), 0 4px 16px rgba(27,42,74,0.06);
+  }
+
+  html { font-size: 16px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+  }
+  .logo-icon {
+    width: 46px; height: 46px;
+    background: var(--cyan);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-icon i { font-size: 24px; color: var(--navy); }
+  .logo-text { color: var(--white); font-size: 22px; font-weight: 600; letter-spacing: -0.4px; }
+  .logo-sub { color: var(--cyan-text); font-size: 12px; margin-top: 2px; }
+  .header-badge {
+    margin-left: auto;
+    background: var(--cyan);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-card);
+  }
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    margin-bottom: 14px;
+  }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone {
+    border: 2px dashed var(--cyan);
+    border-radius: var(--radius-md);
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--cyan-pale);
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-zone:hover { background: #D4EEF5; border-color: var(--cyan-dark); }
+  .upload-zone i { font-size: 32px; color: var(--cyan-dark); display: block; margin-bottom: 10px; }
+  .upload-zone-title { font-size: 14px; font-weight: 500; color: var(--navy); margin-bottom: 4px; }
+  .upload-zone-hint { font-size: 12px; color: var(--text-secondary); }
+  #file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .preview-thumb {
+    height: 80px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    background: var(--bg-secondary);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    background: var(--navy);
+    color: white; border: none;
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    font-size: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.85;
+    transition: opacity 0.15s;
+  }
+  .remove-btn:hover { opacity: 1; }
+
+  /* ── TEXTAREA ── */
+  textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: var(--white);
+    resize: vertical;
+    min-height: 96px;
+    line-height: 1.55;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(0,170,204,0.12);
+  }
+  textarea::placeholder { color: var(--text-muted); }
+
+  /* ── QUICK TAGS ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .tag {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tag:hover { background: var(--cyan-pale); border-color: var(--cyan); color: var(--navy); }
+  .tag.active { background: var(--navy); color: var(--cyan-text); border-color: var(--navy); }
+
+  /* ── ACCESS BUTTONS ── */
+  .access-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
+  .access-btn {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-secondary);
+    cursor: pointer;
+    background: var(--white);
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .access-btn i { font-size: 16px; flex-shrink: 0; }
+  .access-btn:hover { border-color: var(--cyan); background: var(--cyan-pale); color: var(--navy); }
+  .access-btn.active { border-color: var(--cyan); background: var(--cyan-pale); color: var(--navy); font-weight: 500; }
+  .access-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    margin-left: auto;
+    transition: background 0.15s;
+  }
+  .access-btn.active .access-dot { background: var(--cyan); }
+
+  /* ── GENERATE BUTTON ── */
+  .generate-btn {
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.1px;
+    margin-top: 4px;
+    box-shadow: 0 2px 8px rgba(27,42,74,0.18);
+  }
+  .generate-btn:hover { background: var(--navy-light); }
+  .generate-btn:active { transform: scale(0.99); }
+  .generate-btn:disabled { background: #B0BBC9; cursor: not-allowed; box-shadow: none; }
+  .generate-btn i { font-size: 18px; }
+
+  /* ── LOADING ── */
+  .loading-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px;
+    gap: 14px;
+  }
+  .loading-state.visible { display: flex; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(0,170,204,0.2);
+    border-top-color: var(--cyan);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+  }
+  .loading-text { font-size: 14px; color: var(--text-secondary); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── ERROR ── */
+  .error-box {
+    display: none;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: #B91C1C;
+    margin-top: 10px;
+  }
+  .error-box.visible { display: block; }
+
+  /* ── RESULT ── */
+  .result-box {
+    display: none;
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-top: 14px;
+    box-shadow: 0 4px 20px rgba(27,42,74,0.22);
+  }
+  .result-box.visible { display: block; }
+  .result-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .result-header i { font-size: 24px; color: var(--cyan); }
+  .result-title { color: var(--white); font-size: 16px; font-weight: 600; }
+  .result-sub { color: var(--cyan-text); font-size: 12px; margin-top: 2px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+    padding: 13px 12px;
+  }
+  .stat-label { font-size: 10.5px; color: var(--cyan-text); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; font-weight: 600; color: var(--white); line-height: 1.1; }
+  .stat-unit { font-size: 11.5px; color: var(--cyan-text); margin-top: 3px; }
+
+  .band-bar {
+    background: var(--cyan);
+    border-radius: var(--radius-sm);
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .band-label { font-size: 12px; color: var(--navy); font-weight: 600; }
+  .band-value { font-size: 14.5px; color: var(--navy); font-weight: 600; }
+
+  .flags-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+  .flag {
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--cyan-text);
+  }
+  .flag.warn { background: rgba(239,159,39,0.22); color: #FAC775; }
+
+  .summary-box {
+    background: rgba(255,255,255,0.07);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .summary-label { font-size: 10.5px; color: var(--cyan-text); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .summary-text { font-size: 13.5px; color: #D0E8F0; line-height: 1.65; }
+
+  .action-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .copy-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 11px 8px;
+    color: var(--cyan-text);
+    font-size: 12.5px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.07); }
+  .copy-btn i { font-size: 15px; flex-shrink: 0; }
+  .copy-btn.pdf-btn { border-color: rgba(0,170,204,0.4); color: #7BCCE0; }
+  .copy-btn.email-btn { border-color: rgba(0,170,204,0.4); color: #7BCCE0; }
+
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    body { background: white; padding: 0; }
+    .card, .header { box-shadow: none; }
+    .upload-zone, #quick-tags, .access-grid, .generate-btn,
+    .loading-state, .error-box, .action-btns { display: none !important; }
+    .result-box { display: block !important; background: #1B2A4A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .wrap { max-width: 100%; }
+  }
+
+  /* ── FOOTER ── */
+  .powered {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 24px;
+    letter-spacing: 0.2px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-icon">
+      <i class="ti ti-truck"></i>
+    </div>
+    <div>
+      <div class="logo-text">MoveIQ</div>
+      <div class="logo-sub">AI-powered removalist quoting</div>
+    </div>
+    <div class="header-badge">Beta</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <div class="section-label">Step 1 — Photograph the job</div>
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept="image/*" multiple>
+      <i class="ti ti-camera"></i>
+      <div class="upload-zone-title">Tap to upload photos of rooms, furniture &amp; access</div>
+      <div class="upload-zone-hint">Living areas, bedrooms, garage, driveway — capture it all</div>
+    </div>
+    <div class="preview-grid" id="preview-grid"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card">
+    <div class="section-label">Step 2 — Describe the job</div>
+    <textarea id="job-desc" placeholder="e.g. 3 bedroom house, large couch, fridge, washing machine, piano in back room, about 40 boxes already packed..."></textarea>
+    <div class="tags" id="quick-tags">
+      <span class="tag" data-val="3 bedroom house">3 bed house</span>
+      <span class="tag" data-val="2 bedroom unit">2 bed unit</span>
+      <span class="tag" data-val="1 bedroom apartment">1 bed apt</span>
+      <span class="tag" data-val="office relocation">office move</span>
+      <span class="tag" data-val="piano and heavy items">piano / heavy</span>
+      <span class="tag" data-val="fully packed boxes ready">fully packed</span>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card">
+    <div class="section-label">Step 3 — Access conditions</div>
+    <div class="access-grid" id="access-grid">
+      <button class="access-btn" data-val="ground floor, easy access">
+        <i class="ti ti-home"></i> Ground floor
+        <span class="access-dot"></span>
+      </button>
+      <button class="access-btn" data-val="stairs to second floor, no elevator">
+        <i class="ti ti-stairs-up"></i> Stairs / 2nd floor
+        <span class="access-dot"></span>
+      </button>
+      <button class="access-btn" data-val="elevator available">
+        <i class="ti ti-building"></i> Elevator available
+        <span class="access-dot"></span>
+      </button>
+      <button class="access-btn" data-val="narrow driveway, difficult truck access">
+        <i class="ti ti-road"></i> Narrow driveway
+        <span class="access-dot"></span>
+      </button>
+      <button class="access-btn" data-val="long carry distance from truck to door">
+        <i class="ti ti-route"></i> Long carry
+        <span class="access-dot"></span>
+      </button>
+      <button class="access-btn" data-val="parking restrictions on street">
+        <i class="ti ti-parking"></i> Parking issues
+        <span class="access-dot"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <button class="generate-btn" id="analyze-btn">
+    <i class="ti ti-sparkles"></i> Generate AI Quote
+  </button>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loading-state">
+    <div class="spinner"></div>
+    <div class="loading-text">MoveIQ is analysing your job...</div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-box" id="error-box"></div>
+
+  <!-- RESULT -->
+  <div class="result-box" id="result-box">
+    <div class="result-header">
+      <i class="ti ti-circle-check"></i>
+      <div>
+        <div class="result-title">Quote estimate ready</div>
+        <div class="result-sub" id="result-timestamp"></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Estimated duration</div>
+        <div class="stat-value" id="stat-duration">—</div>
+        <div class="stat-unit">hours</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Suggested price</div>
+        <div class="stat-value" id="stat-price">—</div>
+        <div class="stat-unit">AUD estimate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Access difficulty</div>
+        <div class="stat-value" id="stat-access">—</div>
+        <div class="stat-unit">/ 10</div>
+      </div>
+    </div>
+
+    <div class="band-bar">
+      <div class="band-label">Pricing band (decision tree model)</div>
+      <div class="band-value" id="stat-band">—</div>
+    </div>
+
+    <div class="flags-row" id="access-flags"></div>
+
+    <div class="summary-box">
+      <div class="summary-label">Quote summary — ready to share with customer</div>
+      <div class="summary-text" id="stat-summary">—</div>
+    </div>
+
+    <div class="action-btns">
+      <button class="copy-btn" id="copy-btn">
+        <i class="ti ti-copy"></i> Copy
+      </button>
+      <button class="copy-btn pdf-btn" id="pdf-btn">
+        <i class="ti ti-file-type-pdf"></i> Save PDF
+      </button>
+      <button class="copy-btn email-btn" id="email-btn">
+        <i class="ti ti-mail"></i> Email
+      </button>
+    </div>
+  </div>
+
+  <div class="powered">Powered by MoveIQ AI · Built on 1,972 Gold Coast job records · DATA6000 Capstone · Leonardo Giansante</div>
+</div>
+
+<script>
+  const uploadedImages = [];
+  const fileInput = document.getElementById('file-input');
+  const previewGrid = document.getElementById('preview-grid');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const loadingState = document.getElementById('loading-state');
+  const resultBox = document.getElementById('result-box');
+  const errorBox = document.getElementById('error-box');
+  const accessSelections = [];
+
+  // Photo upload handling
+  fileInput.addEventListener('change', (e) => {
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        uploadedImages.push({ name: file.name, data: ev.target.result });
+        renderPreviews();
+      };
+      reader.readAsDataURL(file);
+    });
+    // Reset so same file can be re-selected
+    fileInput.value = '';
+  });
+
+  function renderPreviews() {
+    previewGrid.innerHTML = '';
+    uploadedImages.forEach((img, i) => {
+      const div = document.createElement('div');
+      div.className = 'preview-thumb';
+      div.innerHTML = `<img src="${img.data}" alt="Job photo ${i+1}"><button class="remove-btn" onclick="removeImg(${i})"><i class="ti ti-x" style="font-size:10px"></i></button>`;
+      previewGrid.appendChild(div);
+    });
+  }
+
+  window.removeImg = (i) => { uploadedImages.splice(i, 1); renderPreviews(); };
+
+  // Quick tags
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const ta = document.getElementById('job-desc');
+      const val = tag.dataset.val;
+      ta.value = ta.value ? ta.value + ', ' + val : val;
+      tag.classList.toggle('active');
+    });
+  });
+
+  // Access condition toggles
+  document.querySelectorAll('.access-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      const val = btn.dataset.val;
+      const idx = accessSelections.indexOf(val);
+      if (idx > -1) accessSelections.splice(idx, 1);
+      else accessSelections.push(val);
+    });
+  });
+
+  // Main generate function
+  analyzeBtn.addEventListener('click', generateQuote);
+
+  async function generateQuote() {
+    const desc = document.getElementById('job-desc').value.trim();
+    if (!desc && uploadedImages.length === 0) {
+      showError('Please add a job description or upload at least one photo to continue.');
+      return;
+    }
+
+    errorBox.classList.remove('visible');
+    analyzeBtn.disabled = true;
+    loadingState.classList.add('visible');
+    resultBox.classList.remove('visible');
+
+    const accessNote = accessSelections.length > 0
+      ? 'Access conditions reported: ' + accessSelections.join('; ')
+      : 'No special access conditions noted.';
+
+    const imageCount = uploadedImages.length;
+    const imageNote = imageCount > 0
+      ? `The removalist has uploaded ${imageCount} photo(s) of the property for visual assessment.`
+      : 'No photos were uploaded — estimate based on description only.';
+
+    // Build vision messages if photos were uploaded
+    let userContent;
+    if (uploadedImages.length > 0) {
+      userContent = [
+        { type: 'text', text: `Job description: ${desc || 'Not provided.'}\n${accessNote}\n${imageNote}\n\nPlease analyse the uploaded photos along with the description to estimate the job.` },
+        ...uploadedImages.slice(0, 3).map(img => ({
+          type: 'image',
+          source: { type: 'base64', media_type: 'image/jpeg', data: img.data.split(',')[1] }
+        }))
+      ];
+    } else {
+      userContent = `Job description: ${desc || 'Not provided.'}\n${accessNote}\n${imageNote}`;
+    }
+
+    const systemPrompt = `You are MoveIQ, an AI assistant for a Gold Coast removalist company. Your job is to analyse removal jobs and produce structured quote estimates.
+
+You MUST respond ONLY with valid JSON — no explanation, no markdown, no backticks whatsoever.
+
+Apply this decision tree pricing model (trained on 1,972 real jobs, 98.9% accuracy):
+- Job value ≤$300 → 1-2 hours (Band A)
+- $301–$400 → 2-4 hours (Band B)  
+- $401–$900 → 4-6 hours (Band C)
+- $901–$1,200 → 6-8 hours (Band D)
+- $1,201–$1,500 → 8-10 hours (Band E)
+- Over $1,500 → 12+ hours (Band F)
+
+Access difficulty adjustments:
+- Stairs / no elevator: add 15-20% to duration estimate
+- Narrow driveway: add 10% to duration, flag as operational risk
+- Long carry: add 10% to duration
+- Parking issues: flag as scheduling risk
+
+If photos are provided, use them to identify furniture volume, room count, packing status, and access complexity.
+
+Respond with this EXACT JSON structure only:
+{
+  "duration": "4-6",
+  "price_range": "$580-$720",
+  "pricing_band": "Band C — $401-$900",
+  "access_difficulty": 4,
+  "access_flags": ["Stairs noted — add 15% time buffer", "Easy ground floor pickup"],
+  "summary": "A 2-3 sentence professional quote summary the business owner can copy and send directly to the customer."
+}`;
+
+    try {
+      // CORS proxy needed when running as a local file (file://) - bypasses browser security restriction
+      const response = await fetch('https://corsproxy.io/?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userContent }]
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || 'API request failed');
+      }
+
+      const data = await response.json();
+      const text = data.content.map(i => i.text || '').join('');
+      const clean = text.replace(/```json|```/g, '').trim();
+      const result = JSON.parse(clean);
+
+      // Populate results
+      document.getElementById('stat-duration').textContent = result.duration;
+      document.getElementById('stat-price').textContent = result.price_range;
+      document.getElementById('stat-access').textContent = result.access_difficulty;
+      document.getElementById('stat-band').textContent = result.pricing_band;
+      document.getElementById('stat-summary').textContent = result.summary;
+      document.getElementById('result-timestamp').textContent =
+        'Generated ' + new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+
+      // Render access flags
+      const flagsEl = document.getElementById('access-flags');
+      flagsEl.innerHTML = '';
+      (result.access_flags || []).forEach(f => {
+        const span = document.createElement('span');
+        const isWarn = f.toLowerCase().includes('risk') || f.toLowerCase().includes('difficult') || f.toLowerCase().includes('buffer');
+        span.className = 'flag' + (isWarn ? ' warn' : '');
+        span.textContent = f;
+        flagsEl.appendChild(span);
+      });
+
+      loadingState.classList.remove('visible');
+      resultBox.classList.add('visible');
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      loadingState.classList.remove('visible');
+      showError('Could not generate quote. Please check your connection and try again. (' + err.message + ')');
+      console.error(err);
+    }
+
+    analyzeBtn.disabled = false;
+  }
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.add('visible');
+  }
+
+  // Helper to get all quote data in one place
+  function getQuoteData() {
+    return {
+      duration: document.getElementById('stat-duration').textContent,
+      price: document.getElementById('stat-price').textContent,
+      band: document.getElementById('stat-band').textContent,
+      access: document.getElementById('stat-access').textContent,
+      summary: document.getElementById('stat-summary').textContent,
+      timestamp: document.getElementById('result-timestamp').textContent,
+      desc: document.getElementById('job-desc').value.trim() || 'Not provided'
+    };
+  }
+
+  // Copy quote to clipboard
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    const q = getQuoteData();
+    const text = `MoveIQ Quote Estimate\n${'─'.repeat(30)}\nEstimated duration: ${q.duration} hours\nSuggested price: ${q.price}\nPricing band: ${q.band}\nAccess difficulty: ${q.access}/10\n\n${q.summary}\n\n— Generated by MoveIQ AI`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+      setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy"></i> Copy'; }, 2500);
+    });
+  });
+
+  // Save as PDF — injects a hidden iframe into the same page to avoid popup blockers
+  document.getElementById('pdf-btn').addEventListener('click', () => {
+    const q = getQuoteData();
+
+    // Remove any leftover iframe from a previous click
+    const old = document.getElementById('miq-print-frame');
+    if (old) old.remove();
+
+    // Build the full HTML string for the print document
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>MoveIQ Quote</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:white;padding:36px;color:#1B2A4A;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.hdr{background:#1B2A4A;border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.hdr-icon{width:40px;height:40px;background:#00AACC;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#1B2A4A;flex-shrink:0;}
+.hdr-title{color:white;font-size:20px;font-weight:600;}
+.hdr-sub{color:#7BCCE0;font-size:11px;margin-top:2px;}
+.hdr-badge{margin-left:auto;background:#00AACC;color:#1B2A4A;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.desc{background:#F4F6F9;border-radius:8px;padding:13px 15px;margin-bottom:14px;}
+.lbl{font-size:9px;color:#8A9AB2;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;}
+.desc-text{font-size:12px;color:#1B2A4A;line-height:1.6;}
+.result{background:#1B2A4A;border-radius:14px;padding:20px;}
+.r-title{color:white;font-size:15px;font-weight:600;margin-bottom:3px;}
+.r-sub{color:#7BCCE0;font-size:11px;margin-bottom:16px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px;}
+.stat{background:rgba(255,255,255,0.09);border-radius:7px;padding:11px 10px;}
+.stat .lbl{color:#7BCCE0;}
+.stat-val{font-size:20px;font-weight:600;color:white;}
+.stat-unit{font-size:10px;color:#7BCCE0;margin-top:2px;}
+.band{background:#00AACC;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;margin-bottom:12px;}
+.band-lbl{font-size:11px;color:#1B2A4A;font-weight:600;}
+.band-val{font-size:13px;color:#1B2A4A;font-weight:600;}
+.sum{background:rgba(255,255,255,0.07);border-radius:7px;padding:12px 14px;}
+.sum .lbl{color:#7BCCE0;}
+.sum-text{font-size:12.5px;color:#D0E8F0;line-height:1.65;}
+.footer{text-align:center;font-size:10px;color:#8A9AB2;margin-top:18px;}
+</style></head><body>
+<div class="hdr"><div class="hdr-icon">M</div><div><div class="hdr-title">MoveIQ</div><div class="hdr-sub">AI-powered removalist quoting</div></div><div class="hdr-badge">Quote Estimate</div></div>
+<div class="desc"><div class="lbl">Job description</div><div class="desc-text">${q.desc}</div></div>
+<div class="result">
+<div class="r-title">Quote estimate ready</div><div class="r-sub">${q.timestamp}</div>
+<div class="stats">
+<div class="stat"><div class="lbl">Estimated duration</div><div class="stat-val">${q.duration}</div><div class="stat-unit">hours</div></div>
+<div class="stat"><div class="lbl">Suggested price</div><div class="stat-val">${q.price}</div><div class="stat-unit">AUD estimate</div></div>
+<div class="stat"><div class="lbl">Access difficulty</div><div class="stat-val">${q.access}</div><div class="stat-unit">/ 10</div></div>
+</div>
+<div class="band"><div class="band-lbl">Pricing band (decision tree model)</div><div class="band-val">${q.band}</div></div>
+<div class="sum"><div class="lbl">Quote summary</div><div class="sum-text">${q.summary}</div></div>
+</div>
+<div class="footer">Generated by MoveIQ AI &middot; Built on 1,972 Gold Coast job records &middot; DATA6000 Capstone &middot; Leonardo Giansante</div>
+</body></html>`;
+
+    // Create a hidden iframe, write the HTML into it, then trigger print
+    const iframe = document.createElement('iframe');
+    iframe.id = 'miq-print-frame';
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    // Wait for fonts/styles to load inside the iframe before printing
+    iframe.onload = () => {
+      setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      }, 500);
+    };
+  });
+
+  // Email button — creates a temporary <a> tag and clicks it programmatically
+  // This is more reliable than setting window.location.href on local files
+  document.getElementById('email-btn').addEventListener('click', () => {
+    const q = getQuoteData();
+    const subject = encodeURIComponent('MoveIQ Quote Estimate');
+    const body = encodeURIComponent(
+      'Hi,\n\nPlease find your removal quote estimate below.\n\n' +
+      '-----------------------------\n' +
+      'MOVEIQ QUOTE ESTIMATE\n' +
+      '-----------------------------\n\n' +
+      'Estimated duration:   ' + q.duration + ' hours\n' +
+      'Suggested price:      ' + q.price + ' AUD\n' +
+      'Pricing band:         ' + q.band + '\n' +
+      'Access difficulty:    ' + q.access + '/10\n\n' +
+      'QUOTE SUMMARY\n' +
+      q.summary + '\n\n' +
+      '-----------------------------\n' +
+      'Generated by MoveIQ AI\n' +
+      'Built on 1,972 real Gold Coast removalist job records.\n' +
+      'This is an AI estimate — final pricing subject to on-site assessment.\n\n' +
+      'DATA6000 Capstone · Leonardo Giansante · Kaplan Business School'
+    );
+    // Use a temporary anchor click instead of window.location — works on local files
+    const a = document.createElement('a');
+    a.href = 'mailto:?subject=' + subject + '&body=' + body;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+</script>
+</body>
+</html>
